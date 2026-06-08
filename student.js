@@ -597,7 +597,7 @@ function signOut() {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   localStorage.removeItem('role');
-  window.location.href = 'landing.html';
+  window.location.href = 'index.html';
 }
 
 /* ─────────────────────────────────────
