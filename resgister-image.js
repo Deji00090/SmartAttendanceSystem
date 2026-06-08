@@ -119,7 +119,7 @@
 
         // Step 3 — go to dashboard
         setTimeout(() => {
-          window.location.href = "student2.html";
+          window.location.href = "student.html";
         }, 1800);
 
       } else {

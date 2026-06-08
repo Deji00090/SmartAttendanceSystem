@@ -100,7 +100,7 @@ async function handleLogin() {
       localStorage.setItem("token", result.data.token);
       localStorage.setItem("role", "lecturer");
       localStorage.setItem("username", uid);
-      window.location.href = "lecturer2.html";
+      window.location.href = "lecturer.html";
       return;
     }
 
@@ -133,7 +133,7 @@ async function handleLogin() {
       localStorage.setItem("token", result.data.token);
       localStorage.setItem("role", "student");
       localStorage.setItem("username", uid);
-      window.location.href = "student2.html";
+      window.location.href = "student.html";
     }
 
   } catch (error) {
