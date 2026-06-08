@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AttendX — Student Dashboard</title>
+<link rel="stylesheet" href="student.css" />
+</head>
+<body>
+
+<!-- ══════════════════════ SIDEBAR ══════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Attend<span>X</span></div>
+  <div class="sidebar-role">
+    <div class="avatar">CI</div>
+    <div class="user-info">
+      <div class="user-name"></div>
+      <div class="user-role">Student</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <span class="nav-section-label">Main</span>
+    <a class="nav-item active" onclick="showView('overview',this)"><span class="icon">◼</span>Overview</a>
+    <a class="nav-item" onclick="showView('sessions',this)"><span class="icon">◉</span>Active Sessions</a>
+    <span class="nav-section-label">Courses</span>
+    <a class="nav-item" onclick="showView('enroll',this)"><span class="icon">＋</span>Enroll / Unenrolled</a>
+    <span class="nav-section-label">Records</span>
+    <a class="nav-item" onclick="showView('history',this)"><span class="icon">☰</span>My History</a>
+    <a class="nav-item" onclick="showView('eligibility',this)"><span class="icon">✅</span>Exam Eligibility</a>
+    <span class="nav-section-label">Account</span>
+    <a class="nav-item" onclick="signOut()"><span class="icon">→</span>Sign Out</a>
+  </nav>
+</aside>
+
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Overview</div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="notif-dot"></span></button>
+      <div class="avatar">CI</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ OVERVIEW ══════════ -->
+    <div class="view active" id="view-overview">
+      <div class="greeting">
+        <h2 id="overviewGreeting">Hey! 👋</h2>
+        <p id="overviewDate"></p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label-sm">Overall Attendance</div>
+          <div class="stat-value" id="ovOverall">—</div>
+          <div class="stat-sub" id="ovCourseCount">Across your courses</div>
+          <span class="stat-badge" id="ovOverallBadge">—</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label-sm">Sessions Attended</div>
+          <div class="stat-value" id="ovAttended">—</div>
+          <div class="stat-sub" id="ovAttendedSub">Out of total</div>
+          <span class="stat-badge badge-blue">This semester</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label-sm">Sessions Missed</div>
+          <div class="stat-value" id="ovMissed">—</div>
+          <div class="stat-sub">Across all courses</div>
+          <span class="stat-badge badge-orange">This semester</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label-sm">At-Risk Courses</div>
+          <div class="stat-value" id="ovAtRisk">—</div>
+          <div class="stat-sub" id="ovAtRiskSub">Below 75%</div>
+          <span class="stat-badge badge-red">Needs attention</span>
+        </div>
+      </div>
+
+      <div class="donut-section">
+        <div class="donut-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#f0ede7" stroke-width="14"/>
+            <circle id="ovDonutArc" cx="60" cy="60" r="50" fill="none" stroke="#e84d2a"
+              stroke-width="14" stroke-dasharray="264" stroke-dashoffset="264"
+              stroke-linecap="round"/>
+          </svg>
+          <div class="donut-label">
+            <span id="ovDonutPct">—</span>
+            <span class="donut-sub">overall</span>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <h3>Attendance by Course</h3>
+          <div id="ovCourseBreakdown">Loading...</div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px">
+        <span class="section-title">Recent Attendance</span>
+        <button class="btn btn-outline btn-sm"
+          onclick="showView('history', document.querySelector('[onclick*=history]'))">
+          View All
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Date</th>
+              <th>Duration</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ovRecentBody">
+            <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ ACTIVE SESSIONS ══════════ -->
+    <div class="view" id="view-sessions">
+      <div class="greeting">
+        <h2>Active Sessions</h2>
+        <p>Mark your attendance before the window closes</p>
+      </div>
+      <div id="sessionsContainer">
+        <div style="text-align:center;color:var(--muted);padding:40px">Loading sessions...</div>
+      </div>
+    </div>
+
+    <!-- ══════════ ENROLL ══════════ -->
+    <div class="view" id="view-enroll">
+      <div class="greeting">
+        <h2>Course Enrollment</h2>
+        <p>Enroll into courses and view your registered courses</p>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'tab-enrolled')">My Enrolled Courses</div>
+        <div class="tab"        onclick="switchTab(this,'tab-unenrolled')">Available Courses</div>
+      </div>
+
+      <div id="tab-enrolled">
+        <div id="enrolledCoursesContainer"></div>
+      </div>
+
+      <div id="tab-unenrolled" style="display:none">
+        <div id="availableCoursesContainer">Loading.....</div>
+      </div>
+    </div>
+
+    <!-- ══════════ ATTENDANCE HISTORY ══════════ -->
+    <div class="view" id="view-history">
+      <div class="greeting">
+        <h2>My Attendance History</h2>
+        <p>Full record of your attendance — filter by course or status</p>
+      </div>
+
+      <div class="filter-row">
+        <select class="form-select" id="histCourse">
+          <option value="">All Courses</option>
+        </select>
+      </div>
+
+      <div id="histSummary" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Session</th>
+              <th>Course Tag</th>
+              <th>Date & Time</th>
+              <th>Duration</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ EXAM ELIGIBILITY ══════════ -->
+    <div class="view" id="view-eligibility">
+      <div class="greeting">
+        <h2>Exam Eligibility</h2>
+        <p>You need ≥ 75% attendance per course to qualify for exams</p>
+      </div>
+
+      <div class="info-box">
+        ℹ️ <span>The exam eligibility threshold is <strong>75%</strong> per course. Courses below this mark may bar you from sitting the examination.</span>
+      </div>
+
+      <div id="eligCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px"></div>
+
+      <div class="section-title" style="margin-bottom:16px">Detailed Breakdown</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Course</th><th>Attended</th><th>Total Sessions</th><th>Attendance %</th><th>Progress</th><th>Eligibility</th></tr>
+          </thead>
+          <tbody id="eligBody"></tbody>
+        </table>
+      </div>
+
+      <div style="background:white;border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-top:4px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:12px">How many more classes do I need to attend?</div>
+        <div id="eligAdvice" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ═══ CAMERA MODAL ═══ -->
+<div class="camera-overlay" id="cameraOverlay">
+  <div class="camera-title">📷 Face Verification</div>
+  <div class="camera-sub">Position your face clearly in the frame, then click Capture</div>
+  <video id="cameraVideo" autoplay playsinline muted></video>
+  <div class="camera-btn-row">
+    <button class="btn btn-primary" id="captureBtn">Capture 📸</button>
+    <button class="btn btn-outline" id="cancelCameraBtn"
+      style="color:white;border-color:rgba(255,255,255,0.3)">Cancel</button>
+  </div>
+</div>
+
+<script src="student.js"></script>
+</body>
+</html>

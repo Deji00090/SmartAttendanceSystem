@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AttendX — University Attendance System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+
+<div class="deco-circle deco-1"></div>
+<div class="deco-circle deco-2"></div>
+
+<nav>
+  <a href="#" class="logo">Smart <span>Attendance <span></span></a>
+  <span class="nav-badge">University Portal</span>
+</nav>
+
+<main class="hero">
+  <div class="hero-left">
+    <span class="eyebrow">Attendance Management</span>
+    <h1>Track every <em>session,</em> every student.</h1>
+    <p class="hero-desc">Smart Attendance makes attendance seamless — lecturers create sessions in seconds, students mark in one tap. Real-time, reliable, and built for your campus.</p>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-num">98%</span>
+        <span class="stat-label">Accuracy</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">&lt;5s</span>
+        <span class="stat-label">Mark Time</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">Live</span>
+        <span class="stat-label">Monitoring</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="login-container" id="loginContainer">
+
+      <div class="tab-group">
+        <button class="tab-btn active" data-role="lecturer" onclick="switchRole('lecturer')">👨‍🏫 Lecturer</button>
+        <button class="tab-btn" data-role="student" onclick="switchRole('student')">🎓 Student</button>
+      </div>
+
+      <div>
+        <h2 class="login-title" id="loginTitle">Lecturer Login</h2>
+        <p class="login-subtitle" id="loginSubtitle">Sign in with your staff credentials</p>
+      </div>
+
+      <div class="error-msg" id="errorMsg">Invalid User ID or password. Please try again.</div>
+
+      <div>
+        <div class="field-group">
+          <label for="userId">User ID</label>
+          <input type="text" id="userId" placeholder="e.g. LEC-2024-001" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password">
+          <span class="forgot">Forgot password?</span>
+        </div>
+
+        <button class="login-btn" onclick="handleLogin()">
+          Sign In →
+        </button>
+      </div>
+
+      <p class="login-footer">Need help? Contact <strong>smartattendance@edu</strong></p>
+
+    </div>
+  </div>
+</main>
+
+<script src="landing.js"></script>
+
+</body>
+</html>

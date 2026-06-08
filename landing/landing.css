@@ -1,0 +1,349 @@
+  :root {
+    --ink: #0d0f14;
+    --surface: #f5f3ee;
+    --white: #ffffff;
+    --accent: #e84d2a;
+    --accent2: #1a56db;
+    --muted: #7a7a7a;
+    --border: #e0ddd6;
+    --card: #ffffff;
+    --lecturer: #1a56db;
+    --student: #e84d2a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* Background grid pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(13,15,20,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(13,15,20,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(245,243,238,0.85);
+    backdrop-filter: blur(10px);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .nav-badge {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--border);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 73px);
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 48px 80px 48px;
+    border-right: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+  }
+
+  .eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 48px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 40px;
+  }
+
+  .stat-item {}
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--ink);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* RIGHT: LOGIN PANEL */
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 48px;
+    background: var(--white);
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .tab-group {
+    display: flex;
+    gap: 0;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 36px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  .tab-btn.active[data-role="lecturer"] {
+    background: var(--lecturer);
+    color: white;
+  }
+  .tab-btn.active[data-role="student"] {
+    background: var(--student);
+    color: white;
+  }
+
+  .login-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .login-subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--surface);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(13,15,20,0.06);
+    background: var(--white);
+  }
+
+  .role-lecturer input:focus { border-color: var(--lecturer); box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
+  .role-student input:focus { border-color: var(--student); box-shadow: 0 0 0 3px rgba(232,77,42,0.1); }
+
+  .forgot {
+    text-align: right;
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .forgot:hover { color: var(--ink); }
+
+  .login-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    margin-top: 28px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.12);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .login-btn:hover::after { opacity: 1; }
+  .login-btn:active { transform: scale(0.98); }
+
+  .role-lecturer .login-btn { background: var(--lecturer); color: white; }
+  .role-student .login-btn { background: var(--student); color: white; }
+
+  .login-footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Error msg */
+  .error-msg {
+    display: none;
+    background: #fff0ed;
+    border: 1px solid #f9c4b8;
+    color: #c0392b;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    margin-bottom: 18px;
+  }
+
+  /* Decorative shapes */
+  .deco-circle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .deco-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,77,42,0.06), transparent 70%);
+    top: -100px; left: -100px;
+  }
+  .deco-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(26,86,219,0.07), transparent 70%);
+    bottom: -80px; right: -80px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { display: none; }
+    .hero-right { min-height: calc(100vh - 73px); padding: 40px 24px; }
+    nav { padding: 16px 24px; }
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .login-container > * {
+    animation: fadeUp 0.4s ease both;
+  }
+  .login-container > *:nth-child(1) { animation-delay: 0.05s; }
+  .login-container > *:nth-child(2) { animation-delay: 0.1s; }
+  .login-container > *:nth-child(3) { animation-delay: 0.15s; }
+  .login-container > *:nth-child(4) { animation-delay: 0.2s; }

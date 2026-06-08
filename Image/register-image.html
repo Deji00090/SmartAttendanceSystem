@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AttendX — Face Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="register-image.css" >
+</head>
+<body>
+
+<div class="deco-circle deco-1"></div>
+<div class="deco-circle deco-2"></div>
+
+<nav>
+  <a href="#" class="logo">Smart <span>Attendance</span></a>
+  <span class="nav-badge">Student Setup</span>
+</nav>
+
+<main>
+  <div class="card">
+
+    <!-- STEP INDICATOR -->
+    <div class="steps">
+      <div class="step done">
+        <div class="step-dot">✓</div>
+        <span>Account</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step active">
+        <div class="step-dot">2</div>
+        <span>Face Photo</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <span>Dashboard</span>
+      </div>
+    </div>
+
+    <span class="eyebrow">One Last Step</span>
+    <h2 class="card-title">Register your face</h2>
+    <p class="card-subtitle">Upload a clear photo of your face. This will be used to verify your identity when marking attendance.</p>
+
+    <!-- ERROR / SUCCESS MESSAGES -->
+    <div class="msg error" id="errorMsg"></div>
+    <div class="msg success" id="successMsg"></div>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-label">
+        <span>Uploading photo...</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- UPLOAD ZONE -->
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" onchange="handleFileSelect(event)">
+      <div class="upload-icon">📷</div>
+      <div class="upload-primary">Click to upload or drag & drop</div>
+      <div class="upload-secondary">JPG, PNG or WEBP · Max 5MB</div>
+    </div>
+
+    <!-- IMAGE PREVIEW -->
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" src="" alt="Your photo preview">
+      <div class="preview-overlay">
+        <span class="preview-name" id="previewName"></span>
+        <button class="change-btn" onclick="changePhoto()">Change</button>
+      </div>
+    </div>
+
+    <!-- TIPS -->
+    <div class="tips">
+      <div class="tips-title">Photo guidelines</div>
+      <ul>
+        <li>Face clearly visible, no sunglasses</li>
+        <li>Good lighting — avoid dark or backlit photos</li>
+        <li>Look straight into the camera</li>
+        <li>Solo photo — no other people in frame</li>
+      </ul>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitPhoto()" disabled>
+      Register Face 
+    </button>
+<!-- 
+    <span class="skip-link" onclick="skipForNow()">Skip for now — I'll do this later</span> -->
+
+  </div>
+</main>
+
+<script src="resgister-image.js"></script>
+</body>
+</html>
