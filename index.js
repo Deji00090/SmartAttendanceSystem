@@ -4,7 +4,7 @@
   // BACKEND BASE URL
   // =========================
   //const API_BASE = "https://localhost:7040"; 
-  const API_BASE = "http://ayodeji1230-001-site1.ntempurl.com";
+   const API_BASE = "https://smartattendance2-001-site1.gtempurl.com";
   // CHANGE THIS TO YOUR REAL API URL
 
   function switchRole(role) {
