@@ -5,7 +5,101 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AttendX — Face Registration</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="register-image.css" >
+<link rel="stylesheet" href="register-image.css">
+<style>
+  /* ── Camera UI additions ── */
+  .camera-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 1.2rem;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0a0a0a;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #cameraFeed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scaleX(-1); /* mirror so it feels natural */
+  }
+  /* face guide overlay */
+  .face-guide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .face-oval {
+    width: 52%;
+    aspect-ratio: 3/4;
+    border: 2.5px dashed rgba(255,255,255,0.55);
+    border-radius: 50%;
+  }
+  /* corner accent marks */
+  .face-guide::before,
+  .face-guide::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-color: rgba(255,255,255,0.85);
+    border-style: solid;
+  }
+  .face-guide::before { top: 14px; left: 14px; border-width: 2.5px 0 0 2.5px; border-radius: 3px 0 0 0; }
+  .face-guide::after  { bottom: 14px; right: 14px; border-width: 0 2.5px 2.5px 0; border-radius: 0 0 3px 0; }
+
+  .cam-status {
+    position: absolute;
+    bottom: 10px; left: 0; right: 0;
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: .03em;
+  }
+
+  /* camera controls row */
+  .cam-controls {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .cam-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .55rem 1.2rem;
+    border-radius: 999px;
+    border: 1.5px solid currentColor;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s, color .15s, opacity .15s;
+    background: transparent;
+  }
+  .cam-btn:disabled { opacity: .38; cursor: not-allowed; }
+  .cam-btn.primary  { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+  .cam-btn.primary:hover:not(:disabled)  { background: #4338ca; }
+  .cam-btn.secondary { color: #4f46e5; border-color: #4f46e5; }
+  .cam-btn.secondary:hover:not(:disabled) { background: rgba(79,70,229,.07); }
+  .cam-btn.danger   { color: #dc2626; border-color: #dc2626; }
+  .cam-btn.danger:hover:not(:disabled) { background: rgba(220,38,38,.07); }
+
+  /* hidden canvas used for snapshot */
+  #snapCanvas { display: none; }
+
+  /* hide preview-wrap until a shot is taken */
+  #previewWrap { display: none; }
+</style>
 </head>
 <body>
 
@@ -40,16 +134,16 @@
 
     <span class="eyebrow">One Last Step</span>
     <h2 class="card-title">Register your face</h2>
-    <p class="card-subtitle">Upload a clear photo of your face. This will be used to verify your identity when marking attendance.</p>
+    <p class="card-subtitle">Position your face inside the oval, then tap <strong>Capture</strong>. This photo is used to verify your identity when marking attendance.</p>
 
     <!-- ERROR / SUCCESS MESSAGES -->
-    <div class="msg error" id="errorMsg"></div>
+    <div class="msg error"   id="errorMsg"></div>
     <div class="msg success" id="successMsg"></div>
 
     <!-- PROGRESS -->
     <div class="progress-wrap" id="progressWrap">
       <div class="progress-label">
-        <span>Uploading photo...</span>
+        <span>Uploading photo…</span>
         <span id="progressPct">0%</span>
       </div>
       <div class="progress-bar-bg">
@@ -57,20 +151,33 @@
       </div>
     </div>
 
-    <!-- UPLOAD ZONE -->
-    <div class="upload-zone" id="uploadZone">
-      <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" onchange="handleFileSelect(event)">
-      <div class="upload-icon">📷</div>
-      <div class="upload-primary">Click to upload or drag & drop</div>
-      <div class="upload-secondary">JPG, PNG or WEBP · Max 5MB</div>
+    <!-- ── CAMERA SECTION ── -->
+    <div id="cameraSection">
+      <div class="camera-wrap" id="cameraWrap">
+        <video id="cameraFeed" autoplay playsinline muted></video>
+        <div class="face-guide"><div class="face-oval"></div></div>
+        <span class="cam-status" id="camStatus">Starting camera…</span>
+      </div>
+
+      <div class="cam-controls">
+        <!-- <button class="cam-btn secondary" id="switchBtn" onclick="switchCamera()" title="Flip camera">
+          🔄 Flip
+        </button> -->
+        <button class="cam-btn primary" id="captureBtn" onclick="capturePhoto()" disabled>
+         Capture
+        </button>
+      </div>
     </div>
 
-    <!-- IMAGE PREVIEW -->
+    <!-- hidden canvas for snapshot -->
+    <canvas id="snapCanvas"></canvas>
+
+    <!-- IMAGE PREVIEW (shown after capture) -->
     <div class="preview-wrap" id="previewWrap">
-      <img id="previewImg" src="" alt="Your photo preview">
+      <img id="previewImg" src="" alt="Your captured photo">
       <div class="preview-overlay">
-        <span class="preview-name" id="previewName"></span>
-        <button class="change-btn" onclick="changePhoto()">Change</button>
+        <span class="preview-name" id="previewName">Photo captured ✓</span>
+        <button class="cam-btn danger" onclick="retakePhoto()" style="border-width:1.5px;padding:.35rem .9rem;font-size:.82rem;">Retake</button>
       </div>
     </div>
 
@@ -86,14 +193,209 @@
     </div>
 
     <button class="submit-btn" id="submitBtn" onclick="submitPhoto()" disabled>
-      Register Face 
+      Register Face
     </button>
-<!-- 
-    <span class="skip-link" onclick="skipForNow()">Skip for now — I'll do this later</span> -->
 
   </div>
 </main>
 
 <script src="resgister-image.js"></script>
+<script>
+/* ═══════════════════════════════════════════════
+   Camera capture logic
+   ═══════════════════════════════════════════════ */
+
+let stream        = null;   // active MediaStream
+let facingMode    = 'user'; // 'user' = front, 'environment' = back
+let capturedBlob  = null;   // Blob ready for upload
+
+const video       = document.getElementById('cameraFeed');
+const canvas      = document.getElementById('snapCanvas');
+const camStatus   = document.getElementById('camStatus');
+const captureBtn  = document.getElementById('captureBtn');
+const switchBtn   = document.getElementById('switchBtn');
+const cameraSection = document.getElementById('cameraSection');
+const previewWrap   = document.getElementById('previewWrap');
+const previewImg    = document.getElementById('previewImg');
+const submitBtn     = document.getElementById('submitBtn');
+
+/* ── Start camera on load ── */
+window.addEventListener('DOMContentLoaded', () => startCamera());
+
+async function startCamera() {
+  stopStream(); // tear down any previous stream
+  camStatus.textContent = 'Starting camera…';
+  captureBtn.disabled = true;
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
+      audio: false
+    });
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play();
+      camStatus.textContent = 'Position your face inside the oval';
+      captureBtn.disabled = false;
+    };
+  } catch (err) {
+    const msg = err.name === 'NotAllowedError'
+      ? 'Camera access denied. Please allow camera permission and reload.'
+      : 'Could not access camera: ' + err.message;
+    showError(msg);
+    camStatus.textContent = '⚠ Camera unavailable';
+  }
+}
+
+function stopStream() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+}
+
+/* ── Switch front / back ── */
+async function switchCamera() {
+  facingMode = facingMode === 'user' ? 'environment' : 'user';
+  // mirror only the front camera
+  video.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+  await startCamera();
+}
+
+/* ── Take snapshot ── */
+function capturePhoto() {
+  if (!stream) return;
+
+  const w = video.videoWidth;
+  const h = video.videoHeight;
+  canvas.width  = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext('2d');
+  // un-mirror the image so the saved file is correct
+  if (facingMode === 'user') {
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+  }
+  ctx.drawImage(video, 0, 0, w, h);
+
+  canvas.toBlob(blob => {
+    capturedBlob = blob;
+
+    // show preview
+    const url = URL.createObjectURL(blob);
+    previewImg.src = url;
+    previewWrap.style.display = 'block';
+
+    // hide live camera
+    cameraSection.style.display = 'none';
+
+    // enable upload button
+    submitBtn.disabled = false;
+
+    // stop the camera to save battery/resources
+    stopStream();
+  }, 'image/jpeg', 0.92);
+}
+
+/* ── Retake ── */
+function retakePhoto() {
+  capturedBlob = null;
+  previewImg.src = '';
+  previewWrap.style.display = 'none';
+  cameraSection.style.display = 'block';
+  submitBtn.disabled = true;
+  clearMessages();
+  startCamera();
+}
+
+/* ═══════════════════════════════════════════════
+   Upload logic
+   ═══════════════════════════════════════════════ */
+
+async function submitPhoto() {
+  if (!capturedBlob) {
+    showError('Please capture a photo first.');
+    return;
+  }
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    showError('You are not logged in. Please log in first.');
+    return;
+  }
+
+  clearMessages();
+  showProgress(true);
+  submitBtn.disabled = true;
+
+  // Build FormData — same field name your backend expects
+  const formData = new FormData();
+  formData.append('photo', capturedBlob, 'face-capture.jpg');
+
+  try {
+    // XHR gives us upload progress; swap URL to your real endpoint
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://your-backend.com/api/students/upload-photo');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        setProgress(pct);
+      }
+    };
+
+    xhr.onload = () => {
+      showProgress(false);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        showSuccess('Face registered successfully! Redirecting…');
+        setTimeout(() => window.location.href = 'student2.html', 1800);
+      } else {
+        let msg = 'Upload failed.';
+        try { msg = JSON.parse(xhr.responseText).message || msg; } catch (_) {}
+        showError(msg);
+        submitBtn.disabled = false;
+      }
+    };
+
+    xhr.onerror = () => {
+      showProgress(false);
+      showError('Network error. Please check your connection and try again.');
+      submitBtn.disabled = false;
+    };
+
+    xhr.send(formData);
+
+  } catch (err) {
+    showProgress(false);
+    showError('Unexpected error: ' + err.message);
+    submitBtn.disabled = false;
+  }
+}
+
+/* ── Helpers ── */
+function showProgress(on) {
+  document.getElementById('progressWrap').style.display = on ? 'block' : 'none';
+  if (!on) setProgress(0);
+}
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent  = pct + '%';
+}
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+function showSuccess(msg) {
+  const el = document.getElementById('successMsg');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+function clearMessages() {
+  showError(''); showSuccess('');
+}
+</script>
 </body>
 </html>

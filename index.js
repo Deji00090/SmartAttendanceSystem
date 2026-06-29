@@ -3,7 +3,7 @@
   // =========================
   // BACKEND BASE URL
   // =========================
- // const API_BASE = "https://localhost:7040"; 
+  //const API_BASE = "https://localhost:7040"; 
   const API_BASE = "http://ayodeji1230-001-site1.ntempurl.com";
   // CHANGE THIS TO YOUR REAL API URL
 
@@ -16,6 +16,8 @@
     document
       .querySelector(`.tab-btn[data-role="${role}"]`)
       .classList.add('active');
+     
+      
 
     const container = document.getElementById('loginContainer');
     container.className = `login-container role-${role}`;

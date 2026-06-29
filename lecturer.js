@@ -1,11 +1,14 @@
 
-const API_BASE = "http://ayodeji1230-001-site1.ntempurl.com";
-//const API_BASE = "https://localhost:7040";
+// const API_BASE = "http://ayodeji1230-001-site1.ntempurl.com";
+
+const API_BASE = "https://localhost:7040";
 const token = localStorage.getItem("token");
+
 const authHeaders = {
   "Content-Type": "application/json",
   "Authorization": `Bearer ${token}`
 };
+
 
 let lecturerEnrolledCourses = [];
 let lecturerUnenrolledCourses = [];
@@ -14,7 +17,6 @@ let currentLng = null;
 let lecturerHistoryData = [];
 let eligibilityData = [];
 
-/* ═══════════════════════════════ OVERVIEW (all real data) ═══════════════════════════════ */
 
 async function loadOverview() {
   setOverviewGreeting();
@@ -268,7 +270,6 @@ async function downloadEligibilityFile() {
   }
 }
 
-/* ═══════════════════════════════ HISTORY ═══════════════════════════════ */
 
 async function loadLecturerHistory() {
   const courseFilter = document.getElementById('filterCourse').value;
@@ -813,7 +814,7 @@ function signOut() {
   localStorage.removeItem('username');
   localStorage.removeItem('role');
   localStorage.removeItem('lecturerId');
-  window.location.href = 'landing.html';
+  window.location.href = 'index.html';
 }
 
 /* ═══════════════════════════════ INIT ═══════════════════════════════ */

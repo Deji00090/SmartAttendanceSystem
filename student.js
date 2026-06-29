@@ -1,6 +1,6 @@
 
-const API_BASE = "http://ayodeji1230-001-site1.ntempurl.com";
-//const API_BASE = "https://localhost:7040";
+//const API_BASE = "http://ayodeji1230-001-site1.ntempurl.com";
+const API_BASE = "https://localhost:7040";
 const token = localStorage.getItem("token");
 
 const authHeaders = {
@@ -13,21 +13,14 @@ let enrolledCourses   = [];
 let historyData       = [];
 let eligibilityData   = [];
 
-/* ─────────────────────────────────────
-   CAMERA — capture photo from webcam
-   Returns a Promise<Blob|null>
-   null = user cancelled
-─────────────────────────────────────*/
+
 function capturePhotoFromCamera() {
   return new Promise((resolve, reject) => {
     const overlay    = document.getElementById('cameraOverlay');
     const video      = document.getElementById('cameraVideo');
     const captureBtn = document.getElementById('captureBtn');
     const cancelBtn  = document.getElementById('cancelCameraBtn');
-
     let stream = null;
-
-    // Open camera
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(s => {
         stream = s;
@@ -37,8 +30,6 @@ function capturePhotoFromCamera() {
       .catch(err => {
         reject(new Error("Camera access denied. Please allow camera permissions."));
       });
-
-    // Capture
     const onCapture = () => {
       const canvas = document.createElement('canvas');
       canvas.width  = video.videoWidth;
@@ -48,13 +39,10 @@ function capturePhotoFromCamera() {
       cleanup();
       canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.9);
     };
-
-    // Cancel
     const onCancel = () => {
       cleanup();
       resolve(null); // null = cancelled
     };
-
     function cleanup() {
       if (stream) stream.getTracks().forEach(t => t.stop());
       video.srcObject = null;
@@ -62,7 +50,6 @@ function capturePhotoFromCamera() {
       captureBtn.removeEventListener('click', onCapture);
       cancelBtn.removeEventListener('click', onCancel);
     }
-
     captureBtn.addEventListener('click', onCapture);
     cancelBtn.addEventListener('click', onCancel);
   });
@@ -132,28 +119,21 @@ async function markAttendance(courseTag, courseId) {
   if (verifyResult.statuscode !== 200) {
     alert(`❌ ${verifyResult.message}`); // shows your exact backend message
     btn.textContent = 'Mark Present ✓';
-    btn.disabled = false;
-    return; // STOP — don't proceed to location or attendance
+    btn.disabled = false; return; 
   }
-
-  // ── STEP 3: Get GPS location ──
   btn.textContent = 'Getting location...';
-
   if (!navigator.geolocation) {
     alert("Geolocation is not supported by your browser.");
     btn.textContent = 'Mark Present ✓';
     btn.disabled = false;
     return;
   }
-
   navigator.geolocation.getCurrentPosition(
     async (position) => {
       const latitude  = position.coords.latitude;
       const longitude = position.coords.longitude;
 
       btn.textContent = 'Marking...';
-
-      // ── STEP 4: Mark attendance ──
       try {
         const res = await fetch(`${API_BASE}/api/Student/MarkAttendance`, {
           method: "POST",
@@ -202,6 +182,7 @@ async function markAttendance(courseTag, courseId) {
     { enableHighAccuracy: false, timeout: 15000, maximumAge: 30000 }
   );
 }
+
 
 /* ─────────────────────────────────────
    VIEW NAVIGATION
@@ -351,9 +332,8 @@ function renderHistory() {
     : `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">No records found.</td></tr>`;
 }
 
-/* ─────────────────────────────────────
-   ELIGIBILITY
-─────────────────────────────────────*/
+
+
 async function loadEligibility() {
   const res = await fetch(`${API_BASE}/api/Student/EligibilityStatus`, { headers: authHeaders });
   const result = await res.json();
@@ -376,6 +356,7 @@ function renderEligibility(data) {
       </div>
     `;
   }).join('');
+
 
   document.getElementById('eligBody').innerHTML = data.map(c => {
     const cls   = c.isEligible ? (c.eligibilityPercentage >= 85 ? 'elig-eligible' : 'elig-warning') : 'elig-ineligible';
@@ -411,9 +392,7 @@ function renderEligibility(data) {
   }).join('');
 }
 
-/* ─────────────────────────────────────
-   API — courses
-─────────────────────────────────────*/
+
 async function loadAvailableCourses() {
   try {
     const res    = await fetch(API_BASE + "/api/Student/UnEnrolledCourse", { method:"GET", headers:authHeaders });
@@ -630,3 +609,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadActiveSessions()
   ]);
 });
+
+
+ // 846,400
+ 
+ // 884,400
